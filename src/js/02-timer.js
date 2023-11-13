@@ -3,7 +3,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
 const input = document.querySelector('#datetime-picker');
-const button = document.querySelector('button[data-start]');
+const startButton = document.querySelector('button[data-start]');
 
 let dayTime = document.querySelector('span[data-days]');
 let hourTime = document.querySelector('span[data-hours]');
@@ -11,7 +11,7 @@ let minuteTime = document.querySelector('span[data-minutes]');
 let secondTime = document.querySelector('span[data-seconds]');
 
 const currentData = new Date();
-button.disabled = true;
+startButton.disabled = true;
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -41,15 +41,20 @@ const fp = flatpickr(input, {
     if (selectedDates[0].getTime() - currentData.getTime() < 0) {
       Notiflix.Report.warning('Please choose a date in the future');
     } else {
-      button.disabled = false;
-      button.addEventListener('click', () => {
+      startButton.disabled = false;
+      startButton.addEventListener('click', () => {
         const timeId = setInterval(() => {
           const currentTime = new Date();
-          let ms = selectedDates[0].getTime() - currentTime.getTime();
-          dayTime.textContent = convertMs(ms).days;
-          hourTime.textContent = convertMs(ms).hours;
-          minuteTime.textContent = convertMs(ms).minutes;
-          secondTime.textContent = convertMs(ms).seconds;
+          const ms = selectedDates[0].getTime() - currentTime.getTime();
+
+          function addLeadingZero(value) {
+            return value.toString().padStart(2, '0');
+}
+
+          dayTime.textContent = addLeadingZero(convertMs(ms).days);
+          hourTime.textContent = addLeadingZero(convertMs(ms).hours);
+          minuteTime.textContent = addLeadingZero(convertMs(ms).minutes);
+          secondTime.textContent = addLeadingZero(convertMs(ms).seconds);
           if (ms < 1000) {
             clearInterval(timeId);
             hourTime.textContent = '00';
